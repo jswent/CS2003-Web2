@@ -24,7 +24,7 @@ form.addEventListener('submit', function(e) {
   }
 
   console.log(obj);
-  fetch('/api/putMovie', {
+  fetch('api/putMovie', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(obj) 
