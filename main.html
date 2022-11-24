@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link type="text/css" href="./style.css" rel="stylesheet">
+  </head>
+  <body>
+    <div id="header">
+      <button class="med-btn right-align responsive" id="add-btn" onclick="openForm()">Add Movie</button>
+    </div>
+    <div class="confirm-popup" id="confirm-wrapper">
+      <form class="confirm-container" id="confirm">
+        <h2>Are you sure you want to...</h2>
+        <p id="confirm-text">Inject JS here...</p>
+
+        <p class="hidden" id="confirm-movieid"></p>
+
+        <div class="buttons">
+          <button type="submit" class="btn submit">Confirm</button>
+          <button type="button" class="btn cancel" onclick="closeConfirm()">Cancel</button>
+        </div>
+      </form>
+    </div>
+    <div class="form-popup" id="crudform-wrapper">
+      <form class="form-container" id="crudform">
+        <h2 class="form-header" id="crudform-header">Inject current movie here...</h2>
+        <p class="hidden" id="crudform-movieid">Inject current movie id here...</p>
+
+        <label for="director_name"><b>Director</b></label>
+        <input type="text" placeholder="Director name" name="director_name" id="inp-director">
+
+        <label for="actors"><b>Actors</b></label>
+        <input type="text" placeholder="Actor names" name="actors" id="inp-actors">
+
+        <label for="genres"><b>Genres</b></label>
+        <input type="text" placeholder="Genre list" name="genres" id="inp-genres">
+
+        <label for="plot_keywords"><b>Plot Keywords</b></label>
+        <input type="text" placeholder="Plot keyword list" name="plot_keywords" id="inp-plots">
+
+        <label for="link"><b>IMDb Link</b></label>
+        <input type="text" placeholder="Link to IMDb page" name="link" id="inp-link">
+
+        <div class="buttons">
+          <button type="submit" class="btn submit">Submit</button>
+          <button type="button" class="btn cancel" onclick="closeForm()">Cancel</button>
+        </div>
+      </form>
+    </div>
+    <div id="pagecontent">
+      <div id="content-2-wide">
+        <div id="main">
+          <h2>IMDb Movie List</h2>
+          <div id="movieList">
+            Inject movie list here...
+          </div>
+          <button id="loadmore" onclick="loadMovieList()">Load more titles</button>
+          <p class="desc">
+            Currently showing <label id="current-titles">???</label> of <label id="all-titles">???</label> titles.
+          </p>
+        </div>
+      </div>
+    </div>
+  
+    <script type="text/javascript" src="./form.js"></script>
+    <script type="text/javascript" src="./client.js"></script>
+  </body>
+</html>
