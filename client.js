@@ -152,7 +152,7 @@ async function loadMovieList() {
 }
 
 function addNewMovie(id) {
-  fetch('/api/getMovieTitle/' + id)
+  fetch('api/getMovieTitle/' + id)
     .then((res) => res.text())
     .then((res) => {
       const parentDiv = document.getElementById('movieList');
@@ -245,7 +245,7 @@ function updateMovieInfo(movie_id) {
 }
 
 function deleteMovie(id) {
-  fetch('/api/deleteMovie/' + id)
+  fetch('api/deleteMovie/' + id)
     .then((res) => res.json())
     .then((res) => {
       console.log(res);
@@ -258,7 +258,7 @@ function deleteMovie(id) {
 }
 
 function loadTitlesInfo() {
-  fetch('/api/getMovieCount')
+  fetch('api/getMovieCount')
     .then((res) => res.text())
     .then((res) => {
       const current = document.getElementById('current-titles');
