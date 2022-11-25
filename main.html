@@ -8,7 +8,11 @@
   </head>
   <body>
     <div id="header">
-      <button class="med-btn right-align responsive" id="add-btn" onclick="openForm()">Add Movie</button>
+      <div class="theme-selector right-align">
+        <button onclick="toggleTheme()" class="theme-selector-btn">
+          <span class="icon theme-icon"></span>
+        </button>
+      </div>
     </div>
     <div class="confirm-popup" id="confirm-wrapper">
       <form class="confirm-container" id="confirm">
@@ -52,18 +56,24 @@
     <div id="pagecontent">
       <div id="content-2-wide">
         <div id="main">
-          <h2>IMDb Movie List</h2>
+          <div class="flexbox">
+            <h2>IMDb Movie List</h2>
+            <button class="med-btn responsive right-align" id="add-btn" onclick="openForm()">Add Movie</button>
+          </div>
           <hr class="divider">
           <div id="movieList">
             Inject movie list here...
           </div>
-          <button id="loadmore" onclick="loadMovieList()">Load more titles</button>
+          <button id="loadmore" onclick="loadMovieBatch()">Load more titles</button>
           <p class="desc">
             Currently showing <label id="current-titles">???</label> of <label id="all-titles">???</label> titles.
           </p>
         </div>
         <div id="sidebar">
           <h3>Sorting Options</h3>
+          <li class="subnav_item">
+            <a class="genre-link" onclick="loadAllMovies()">Load All</a>
+          </li>
           <h4>Genres</h4>
           <ul id="genrelist">
           </ul>
@@ -73,5 +83,6 @@
   
     <script type="text/javascript" src="./form.js"></script>
     <script type="text/javascript" src="./client.js"></script>
+    <script type="text/javascript" src="./dark-mode.js"></script>
   </body>
 </html>
