@@ -70,6 +70,7 @@ function generateNewMovie(body) {
   addObjectPair(obj, body, "actor_3_name");
   addObjectPair(obj, body, "genres");
   addObjectPair(obj, body, "plot_keywords");
+  addObjectPair(obj, body, "movie_imdb_link");
 
   return obj;
 }

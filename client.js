@@ -326,6 +326,12 @@ function updateMovieInfo(movie_id) {
       }
       if (children[1].style.maxHeight) {
         content.textContent = generateContentText(data);
+
+        let contentLink = document.createElement('a');
+        contentLink.className = "movie-link";
+        contentLink.textContent = "IMDb Link";
+        if (data["movie_imdb_link"]) contentLink.href = data["movie_imdb_link"];
+        content.appendChild(contentLink);
       }
     })
   } else if (loadAll) {
