@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 
 // change this to use different datafile
-const DATAFILE = "./data/movie_metadata_subset.json"
+const DATAFILE = process.argv.slice(2)[0] || "./data/movie_metadata_subset.json"
 
 // change the filename in the function to load different dataset
 var movieData = loadMovieData(DATAFILE);
