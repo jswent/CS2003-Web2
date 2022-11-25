@@ -1,0 +1,24 @@
+{
+  "name": "cs2003-net2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "client.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jswent/CS2003-Web2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jswent/CS2003-Web2/issues"
+  },
+  "homepage": "https://github.com/jswent/CS2003-Web2#readme",
+  "devDependencies": {
+    "express": "^4.18.2",
+    "jest": "^29.3.1"
+  }
+}
