@@ -1,15 +1,18 @@
 const form = document.getElementById("crudform");
 
+// add event listener for submitting form
 form.addEventListener('submit', function(e) {
   e.preventDefault();
 
   const formHeader = document.getElementById('crudform-header');
   const formId = document.getElementById('crudform-movieid');
 
+  // create new json object from form contents
   let obj = {};
   obj["id"] = formId.textContent;
   obj["movie_title"] = formHeader.textContent;
 
+  // add content to json object, will be validated by server
   const formData = new FormData(this);
   for (const pair of formData) {
     if (pair[0] != "actors") {
@@ -17,6 +20,7 @@ form.addEventListener('submit', function(e) {
     }
   }
 
+  // add actor data, must split by commas
   const actorSplit = formData.get('actors').split(', ');
   for (let i in actorSplit) {
     let curr = "actor_" + (+i + +1) + "_name"
@@ -24,6 +28,7 @@ form.addEventListener('submit', function(e) {
   }
 
   console.log(obj);
+  // send data to server
   fetch('api/putMovie', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -31,15 +36,18 @@ form.addEventListener('submit', function(e) {
   }).then(function(response) {
     return response.text();
   }).then(function(text) {
+    // if return is successful, update the movie info and genres list
     closeForm();
     updateMovieInfo(text);
     loadTitlesInfo();
+    generateGenreList();
     console.log(text);
   }).catch(function(error) {
     console.log(error);
   })
 })
 
+// open the form
 function openForm(movie_id) {
   let parentDiv = document.getElementById("crudform-wrapper");
   parentDiv.style.display = "block";
@@ -47,6 +55,7 @@ function openForm(movie_id) {
   let form = document.getElementById("crudform");
   document.getElementById("crudform-header").contentEditable = true;
 
+  // if passed movie id load the movies contents into the form, otherwise reset it
   if (movie_id) {
     document.getElementById("crudform-movieid").textContent = movie_id;
     const contentPromise = getMovieContent(movie_id);
@@ -68,6 +77,7 @@ function openForm(movie_id) {
   }
 }
 
+// close the form
 function closeForm() {
   document.getElementById("crudform-wrapper").style.display = "none";
 }
@@ -77,6 +87,7 @@ function closeForm() {
 
 const confirm = document.getElementById('confirm');
 
+// add event listener for submitting confirmation
 confirm.addEventListener('submit', function(e) {
   e.preventDefault();
 
@@ -86,8 +97,10 @@ confirm.addEventListener('submit', function(e) {
 
   closeConfirm();
   loadTitlesInfo();
+  generateGenreList();
 });
 
+// open the confirmation dialog box
 function openConfirm(movie_id, confirm_text) {
   const parentDiv = document.getElementById('confirm-wrapper');
   parentDiv.style.display = "block";
@@ -99,6 +112,7 @@ function openConfirm(movie_id, confirm_text) {
   confirmText.textContent = confirm_text;
 }
 
+// close the confirmation dialog box
 function closeConfirm() {
   document.getElementById('confirm-wrapper').style.display = "none";
 }

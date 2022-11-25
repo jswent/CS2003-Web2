@@ -1,14 +1,17 @@
 const express = require('express');
 const fs = require('fs');
 
+// use express with json parser
 const app = express();
 app.use(express.json());
 
+// change this to use different datafile
 const DATAFILE = "./data/movie_metadata_subset.json"
 
 // change the filename in the function to load different dataset
 var movieData = loadMovieData(DATAFILE);
 
+// return array with contents of file as objects
 function loadMovieData(filename) {
   let file = fs.readFileSync(filename, 'utf-8');
   var obj = JSON.parse(file);
@@ -16,6 +19,7 @@ function loadMovieData(filename) {
   return obj;
 }
 
+// write movieData to file
 function writeMovieData(filename) {
   fs.writeFile(filename, JSON.stringify(movieData, null, 2), err => {
     if (err) {
@@ -24,6 +28,7 @@ function writeMovieData(filename) {
   })
 }
 
+// create array of objects with just id and titles
 function getMovieTitles() {
   var titles = [];
   for (let i in movieData) {
@@ -34,6 +39,7 @@ function getMovieTitles() {
   return titles;
 }
 
+// generates a batch of movie titles from the index provided
 function generateMovieTitlesBatch(lower) {
   let higher = Number(lower) + 20;
   if (higher > movieData.length) {
@@ -51,6 +57,7 @@ function generateMovieTitlesBatch(lower) {
   return titles;
 }
 
+// create a new movie object from the body of the post request
 function generateNewMovie(body) {
   const obj = {};
 
@@ -67,6 +74,7 @@ function generateNewMovie(body) {
   return obj;
 }
 
+// add the content to the object if it exists
 function addObjectPair(obj, body, key) {
   if (body[key]) {
     obj[key] = body[key];
@@ -75,6 +83,7 @@ function addObjectPair(obj, body, key) {
   }
 }
 
+// loops through all objects and creates a list of genres
 function generateGenreList() {
   let arr = [];
 
@@ -91,6 +100,7 @@ function generateGenreList() {
   return arr;
 }
 
+// find all movies that contain the provided genre
 function findMoviesByGenre(genre) {
   let movies = movieData.filter(movie => {
     let genreSplit = movie.genres.split("|")
@@ -109,43 +119,63 @@ function findMoviesByGenre(genre) {
 
 /* SERVE FILES */
 app.get('/', (req, res) => {
-  console.log('Received request');
+  console.log('Received request for main.html');
   res.sendFile(__dirname + '/main.html');
 });
 
 app.get('/client.js', (req, res) => {
-  console.log('Received request');
+  console.log('Received request for client.js');
   res.sendFile(__dirname + '/client.js');
 });
 
 app.get('/form.js', (req, res) => {
-  console.log('Received request');
+  console.log('Received request for form.js');
   res.sendFile(__dirname + '/form.js');
 })
 
+app.get('/dark-mode.js', (req, res) => {
+  console.log('Received request for dark-mode.js');
+  res.sendFile(__dirname + '/dark-mode.js');
+})
+
 app.get('/style.css', (req, res) => {
-  console.log('Received request');
+  console.log('Received request for styles');
   res.sendFile(__dirname + '/style.css');
 });
 
 app.get('/assets/edit.png', (req, res) => {
-  console.log('Received request');
+  console.log('Received request for assets');
   res.sendFile(__dirname + '/assets/edit.png');
 })
 
+app.get('/assets/theme-dark.svg', (req, res) => {
+  console.log('Received request for assets');
+  res.sendFile(__dirname + '/assets/theme-dark.svg');
+})
+
+app.get('/assets/theme-light.svg', (req, res) => {
+  console.log('Received request for assets');
+  res.sendFile(__dirname + '/assets/theme-light.svg');
+})
+
+app.get('/assets/theme-os.svg', (req, res) => {
+  console.log('Received request for assets');
+  res.sendFile(__dirname + '/assets/theme-os.svg');
+})
+
 app.get('/assets/delete.svg', (req, res) => {
-  console.log('Received request');
+  console.log('Received request for assets');
   res.sendFile(__dirname + '/assets/delete.svg');
 })
 
 /* API */
 app.get('/api/getMovieTitles', (req, res) => {
-  console.log('Received request');
+  console.log('Received request for movie titles');
   res.send(JSON.stringify(getMovieTitles()));
 });
 
 app.get('/api/getBatchMovieTitles/:lower', (req, res) => {
-  console.log('Received request');
+  console.log('Received request for movie titles batch from ' + req.params.lower);
   res.send(JSON.stringify(generateMovieTitlesBatch(req.params.lower)));
 })
 
@@ -156,7 +186,7 @@ app.get('/api/getMovieTitle/:id', (req, res) => {
 })
 
 app.get('/api/getMovieCount', (req, res) => {
-  console.log('Received request');
+  console.log('Received request for movie count');
   res.status(200).send(String(movieData.length));
 })
 
@@ -170,6 +200,7 @@ app.post('/api/putMovie', (req, res) => {
   const id = req.body["id"];
   let movie = movieData.find(movie => movie["id"] == id)
   if (movie) {
+    console.log('Received edit request for ' + movie["movie_title"]);
     for (let key in req.body) {
       // implement validity check
       if (req.body[key] != movie[key]) {
@@ -178,7 +209,7 @@ app.post('/api/putMovie', (req, res) => {
       }
     }
   } else {
-    console.log(req.body);
+    console.log("Creating new movie " + req.body["movie_title"]);
     movie = generateNewMovie(req.body);
     console.log(movie);
     movieData.push(movie);
@@ -192,6 +223,7 @@ app.post('/api/putMovie', (req, res) => {
 app.get('/api/deleteMovie/:id', (req, res) => {
   let index = movieData.findIndex(movie => movie["id"] == req.params.id) ;
   if (index == -1) res.status(404).send("The movie with the given id could not be found");
+  console.log("Deleting movie at " + index);
   let result = !!movieData.splice(index, 1);
   res.status(200).send(result);
 
@@ -199,20 +231,19 @@ app.get('/api/deleteMovie/:id', (req, res) => {
 })
 
 app.get('/api/getGenreList', (req, res) => {
-  console.log('Received request');
+  console.log('Received request for genre list');
   let genres = generateGenreList();
-  console.log(genres);
   res.send(JSON.stringify(genres));
 })
 
 app.get('/api/getMoviesByGenre/:genre', (req, res) => {
-  console.log('Received request');
+  console.log('Received request for movies in ' + req.params.genre);
   let genres = generateGenreList();
   if (!genres.includes(req.params.genre)) res.status(404).send("The genre could not be found");
   let movies = findMoviesByGenre(req.params.genre);
   res.send(JSON.stringify(movies));
 })
 
-// const port = process.getuid()
-const port = 8080;
+const port = process.getuid()
+// const port = 8080;
 app.listen(port, () => console.log('Listening at port: ' + port));
