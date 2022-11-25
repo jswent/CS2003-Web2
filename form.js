@@ -7,44 +7,47 @@ form.addEventListener('submit', function(e) {
   const formHeader = document.getElementById('crudform-header');
   const formId = document.getElementById('crudform-movieid');
 
-  // create new json object from form contents
-  let obj = {};
-  obj["id"] = formId.textContent;
-  obj["movie_title"] = formHeader.textContent;
+  // ensure a title is entered
+  if (formHeader.textContent != "Enter movie title here") {
+    // create new json object from form contents
+    let obj = {};
+    obj["id"] = formId.textContent;
+    obj["movie_title"] = formHeader.textContent;
 
-  // add content to json object, will be validated by server
-  const formData = new FormData(this);
-  for (const pair of formData) {
-    if (pair[0] != "actors") {
-      obj[pair[0]] = pair[1];
+    // add content to json object, will be validated by server
+    const formData = new FormData(this);
+    for (const pair of formData) {
+      if (pair[0] != "actors") {
+        obj[pair[0]] = pair[1];
+      }
     }
-  }
 
-  // add actor data, must split by commas
-  const actorSplit = formData.get('actors').split(', ');
-  for (let i in actorSplit) {
-    let curr = "actor_" + (+i + +1) + "_name"
-    obj[curr] = actorSplit[i];
-  }
+    // add actor data, must split by commas
+    const actorSplit = formData.get('actors').split(', ');
+    for (let i in actorSplit) {
+      let curr = "actor_" + (+i + +1) + "_name"
+      obj[curr] = actorSplit[i];
+    }
 
-  console.log(obj);
-  // send data to server
-  fetch('api/putMovie', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(obj) 
-  }).then(function(response) {
-    return response.text();
-  }).then(function(text) {
-    // if return is successful, update the movie info and genres list
-    closeForm();
-    updateMovieInfo(text);
-    loadTitlesInfo();
-    generateGenreList();
-    console.log(text);
-  }).catch(function(error) {
-    console.log(error);
-  })
+    console.log(obj);
+    // send data to server
+    fetch('api/putMovie', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(obj) 
+    }).then(function(response) {
+      return response.text();
+    }).then(function(text) {
+      // if return is successful, update the movie info and genres list
+      closeForm();
+      updateMovieInfo(text);
+      loadTitlesInfo();
+      generateGenreList();
+      console.log(text);
+    }).catch(function(error) {
+      console.log(error);
+    })
+  }
 })
 
 // open the form
