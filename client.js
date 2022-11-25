@@ -48,9 +48,36 @@ function generateContentText(data) {
     })
     plot = plot.slice(0, -2) + "\r\n";
   } 
+  plot += "\r\n";
 
   text = director + actors + genres + plot;
   return text;
+}
+
+function createSubnav(text, className, onclick) {
+  let subnavItem = document.createElement('li');
+  subnavItem.className = "subnav_item";
+
+  let a = document.createElement('a');
+  a.className = className;
+  a.textContent = text;
+  a.onclick = () => onclick(text);
+
+  subnavItem.appendChild(a);
+  
+  return subnavItem;
+}
+
+function generateGenreList() {
+  fetch('api/getGenreList')
+    .then((res) => res.json()) 
+    .then((res) => {
+      let genrelist = document.getElementById('genrelist');
+      for (const genre of res) {
+        let newGenre = createSubnav(genre, 'genre-link', loadMoviesByGenre);
+        genrelist.appendChild(newGenre);
+      }
+    })
 }
 
 function handleEdit(movie_id, e) {
@@ -170,9 +197,13 @@ function addNewMovie(id) {
           console.log(id);
           const contentPromise = getMovieContent(id);
           contentPromise.then((data) => {
-            // console.log(data);
-
             contentText.textContent = generateContentText(data);
+
+            let contentLink = document.createElement('a');
+            contentLink.className = "movie-link";
+            contentLink.textContent = "IMDb Link";
+            if (data["movie_imdb_link"]) contentLink.href = data["movie_imdb_link"];
+            contentText.appendChild(contentLink);
           });
           console.log(content.scrollHeight);
           // content.style.maxHeight = content.scrollHeight + "px";
@@ -217,6 +248,27 @@ function addNewMovie(id) {
 
       parentDiv.appendChild(newMovie);
     })
+}
+
+async function loadMoviesByGenre(genre) {
+  let parentDiv = document.getElementById('movieList');
+  parentDiv.innerHTML = "";
+  genreSet = true;
+
+  let movies = [];
+  await fetch('api/getMoviesByGenre/' + genre) 
+    .then((res) => res.json())
+    .then((res) => {
+      movies = res; 
+    })
+    .catch((error) => console.warn(error));
+
+  for (const obj of movies) {
+    addNewMovie(Object.keys(obj)[0]);
+  }
+
+  loadTitlesInfo();
+  document.getElementById('loadmore').style.display = "none";
 }
 
 function updateMovieInfo(movie_id) {
@@ -270,7 +322,7 @@ function loadTitlesInfo() {
       total.textContent = res;
 
       const loadbutton = document.getElementById('loadmore');
-      if (res == num) {
+      if (res == num || genreSet) {
         loadbutton.style.display = "none";
       } else {
         loadbutton.style.display = "block";
@@ -279,4 +331,6 @@ function loadTitlesInfo() {
 }
 
 hasBeenInitialized = false;
+genreSet = false;
 loadMovieList();
+generateGenreList();
